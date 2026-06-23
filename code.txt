@@ -1,0 +1,143 @@
+
+App.jsx – Main Router Setup
+import { BrowserRouter, Routes, Route }
+  from 'react-router-dom';
+import Home from './pages/Home';
+import About from './pages/About';
+import Students from './pages/Students';
+import StudentDetail from './pages/StudentDetail';
+import NotFound from './pages/NotFound';
+import Navbar from './components/Navbar';
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Navbar />
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/about' element={<About />} />
+        <Route path='/students' element={<Students />} />
+        <Route
+          path='/students/:id'
+          element={<StudentDetail />}
+        />
+        <Route path='*' element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+Navbar.jsx – Navigation Component
+import { NavLink } from 'react-router-dom';
+export default function Navbar() {
+  return (
+    <nav style={{ display:'flex', gap:'20px',
+      padding:'10px', background:'#2c3e50' }}>
+      <NavLink to='/' style={navStyle}>Home</NavLink>
+      <NavLink to='/about' style={navStyle}>About</NavLink>
+      <NavLink to='/students' style={navStyle}>
+        Students
+      </NavLink>
+    </nav>
+  );
+}
+const navStyle = ({ isActive }) => ({
+  color: isActive ? '#f39c12' : 'white',
+  fontWeight: isActive ? 'bold' : 'normal',
+  textDecoration: 'none',
+  fontSize: '16px'
+});
+Students.jsx – List Page with Links
+import { Link } from 'react-router-dom';
+const studentData = [
+  { id: 1, name: 'Arjun', course: 'BCA' },
+  { id: 2, name: 'Priya', course: 'BSc' },
+  { id: 3, name: 'Rahul', course: 'MCA' },
+];
+export default function Students() {
+  return (
+    <div style={{ padding:'20px' }}>
+      <h2>Student List</h2>
+      {studentData.map((s) => (
+        <div key={s.id}>
+          <Link to={`/students/${s.id}`}>
+            {s.name} – {s.course}
+          </Link>
+        </div>
+      ))}
+    </div>
+  );
+}
+StudentDetail.jsx – Dynamic URL Params
+import { useParams, useNavigate }
+  from 'react-router-dom';
+const studentData = [
+  { id: 1, name: 'Arjun', course: 'BCA',
+    email: 'arjun@mail.com' },
+  { id: 2, name: 'Priya', course: 'BSc',
+    email: 'priya@mail.com' },
+  { id: 3, name: 'Rahul', course: 'MCA',
+    email: 'rahul@mail.com' },
+];
+export default function StudentDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const student = studentData.find(
+    (s) => s.id === parseInt(id)
+  );
+  if (!student) return <h2>Student Not Found</h2>;
+  return (
+    <div style={{ padding:'20px' }}>
+      <h2>Student Detail</h2>
+      <p><strong>Name:</strong> {student.name}</p>
+      <p><strong>Course:</strong> {student.course}</p>
+      <p><strong>Email:</strong> {student.email}</p>
+      <button onClick={() => navigate('/students')}>
+        Back to List
+      </button>
+    </div>
+  );
+}
+export default function About() {
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>About Page</h1>
+      <p>
+        This mini project demonstrates the use of React Router
+        for navigation between multiple pages.
+      </p>
+ 
+      <h3>Features:</h3>
+      <ul>
+        <li>Home Page</li>
+        <li>About Page</li>
+        <li>Student List Page</li>
+        <li>Student Detail Page</li>
+        <li>Dynamic URL Parameters</li>
+        <li>404 Not Found Page</li>
+      </ul>
+    </div>
+  );
+}
+export default function Home() {
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Welcome to Student Management App</h1>
+      <p>
+        This is the Home Page of the React Router mini project.
+      </p>
+      <p>
+        Use the navigation bar to explore different pages.
+      </p>
+    </div>
+  );
+}
+export default function NotFound() {
+  return (
+    <div style={{ padding: "20px", textAlign: "center" }}>
+      <h1>404</h1>
+      <h2>Page Not Found</h2>
+      <p>
+        The page you are looking for does not exist.
+      </p>
+    </div>
+  );
+}
